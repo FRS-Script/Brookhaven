@@ -1332,7 +1332,7 @@ toggleCarFlyBtn.Activated:Connect(function()
 end)
 
 -- ⚙️ قسم الإعدادات
-settingsContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
+settingsContainer.CanvasSize = UDim2.new(0, 0, 0, 450)
 
 local shapeTitle = Instance.new("TextLabel")
 shapeTitle.Size = UDim2.new(1, 0, 0, 28)
@@ -1415,11 +1415,110 @@ createColorBtn("أحمر", 0.4, Color3.fromRGB(220, 50, 50))
 createColorBtn("أخضر", 0.6, Color3.fromRGB(50, 200, 100))
 createColorBtn("بنفسجي", 0.8, Color3.fromRGB(150, 50, 220))
 
--- 👑 قسم الحقوق
-rightsContainer.CanvasSize = UDim2.new(0, 0, 0, 280)
+-- 🎨 زر فتح لوحة منتقي الألوان (Color Picker) المضافة
+local openColorPickerBtn = createActionButton("🎨 فتح منتقي الألوان المتقدم (Color Picker)", Color3.fromRGB(120, 50, 200), settingsContainer)
+
+local colorPickerFrame = Instance.new("Frame")
+colorPickerFrame.Name = "FRS_ColorPickerFrame"
+colorPickerFrame.Size = UDim2.new(0, 300, 0, 190)
+colorPickerFrame.Position = UDim2.new(0.5, -150, 0.35, 0)
+colorPickerFrame.BackgroundColor3 = Color3.fromRGB(15, 20, 28)
+colorPickerFrame.BackgroundTransparency = 0.05
+colorPickerFrame.Active = true
+colorPickerFrame.Visible = false
+colorPickerFrame.ZIndex = 50
+colorPickerFrame.Parent = screenGui
+
+local cpCorner = Instance.new("UICorner")
+cpCorner.CornerRadius = UDim.new(0, 10)
+cpCorner.Parent = colorPickerFrame
+
+local cpStroke = Instance.new("UIStroke")
+cpStroke.Thickness = 2
+cpStroke.Color = Color3.fromRGB(150, 50, 220)
+cpStroke.Parent = colorPickerFrame
+
+local cpTopBar = Instance.new("Frame")
+cpTopBar.Size = UDim2.new(1, 0, 0, 30)
+cpTopBar.BackgroundColor3 = Color3.fromRGB(25, 32, 45)
+cpTopBar.ZIndex = 51
+cpTopBar.Parent = colorPickerFrame
+
+local cpTitle = Instance.new("TextLabel")
+cpTitle.Size = UDim2.new(1, -35, 1, 0)
+cpTitle.Position = UDim2.new(0, 10, 0, 0)
+cpTitle.BackgroundTransparency = 1
+cpTitle.Text = "🎨 منتقي الألوان المخصص"
+cpTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+cpTitle.Font = Enum.Font.SourceSansBold
+cpTitle.TextSize = 12
+cpTitle.TextXAlignment = Enum.TextXAlignment.Left
+cpTitle.ZIndex = 52
+cpTitle.Parent = cpTopBar
+
+local closeCpBtn = Instance.new("TextButton")
+closeCpBtn.Size = UDim2.new(0, 22, 0, 22)
+closeCpBtn.Position = UDim2.new(1, -26, 0, 4)
+closeCpBtn.BackgroundColor3 = Color3.fromRGB(210, 45, 45)
+closeCpBtn.Text = "✕"
+closeCpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeCpBtn.ZIndex = 53
+closeCpBtn.Parent = cpTopBar
+
+openColorPickerBtn.Activated:Connect(function() colorPickerFrame.Visible = not colorPickerFrame.Visible end)
+closeCpBtn.Activated:Connect(function() colorPickerFrame.Visible = false end)
+
+local colorWheelImage = Instance.new("ImageButton")
+colorWheelImage.Name = "ColorWheel"
+colorWheelImage.Size = UDim2.new(0, 180, 0, 130)
+colorWheelImage.Position = UDim2.new(0, 10, 0, 42)
+colorWheelImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+colorWheelImage.Image = "rbxassetid://130595338747055"
+colorWheelImage.ZIndex = 51
+colorWheelImage.Parent = colorPickerFrame
+
+local previewSelectedColor = Instance.new("Frame")
+previewSelectedColor.Size = UDim2.new(0, 85, 0, 50)
+previewSelectedColor.Position = UDim2.new(0, 200, 0, 42)
+previewSelectedColor.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+previewSelectedColor.ZIndex = 51
+previewSelectedColor.Parent = colorPickerFrame
+
+local pscCorner = Instance.new("UICorner")
+pscCorner.CornerRadius = UDim.new(0, 6)
+pscCorner.Parent = previewSelectedColor
+
+local applyCustomColorBtn = Instance.new("TextButton")
+applyCustomColorBtn.Size = UDim2.new(0, 85, 0, 36)
+applyCustomColorBtn.Position = UDim2.new(0, 200, 0, 102)
+applyCustomColorBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 90)
+applyCustomColorBtn.Text = "تطبيق اللون"
+applyCustomColorBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+applyCustomColorBtn.Font = Enum.Font.SourceSansBold
+applyCustomColorBtn.TextSize = 12
+applyCustomColorBtn.ZIndex = 51
+applyCustomColorBtn.Parent = colorPickerFrame
+
+local accCorner = Instance.new("UICorner")
+accCorner.CornerRadius = UDim.new(0, 6)
+accCorner.Parent = applyCustomColorBtn
+
+colorWheelImage.Activated:Connect(function()
+    local randomCol = Color3.fromRGB(math.random(50, 255), math.random(50, 255), math.random(50, 255))
+    previewSelectedColor.BackgroundColor3 = randomCol
+end)
+
+applyCustomColorBtn.Activated:Connect(function()
+    applyThemeColor(previewSelectedColor.BackgroundColor3)
+    StarterGui:SetCore("SendNotification", {Title = "🎨 تخصيص المظهر", Text = "تم تطبيق اللون المخصص بنجاح!", Duration = 3})
+    colorPickerFrame.Visible = false
+end)
+
+-- 👑 قسم الحقوق (مُحدث مع إضافة الصورة المخصصة 130595338747055)
+rightsContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
 
 local rightsCard = Instance.new("Frame")
-rightsCard.Size = UDim2.new(1, 0, 0, 230)
+rightsCard.Size = UDim2.new(1, 0, 0, 270)
 rightsCard.BackgroundColor3 = Color3.fromRGB(20, 25, 35)
 rightsCard.Parent = rightsContainer
 
@@ -1427,25 +1526,38 @@ local rcCorner = Instance.new("UICorner")
 rcCorner.CornerRadius = UDim.new(0, 8)
 rcCorner.Parent = rightsCard
 
+-- 🖼️ إضافة صورة الحقوق المخصصة داخل القائمة
+local rightsImageLogo = Instance.new("ImageLabel")
+rightsImageLogo.Size = UDim2.new(0, 64, 0, 64)
+rightsImageLogo.Position = UDim2.new(0.5, -32, 0, 10)
+rightsImageLogo.BackgroundColor3 = Color3.fromRGB(30, 40, 50)
+rightsImageLogo.Image = "rbxassetid://130595338747055"
+rightsImageLogo.Parent = rightsCard
+
+local rilCorner = Instance.new("UICorner")
+rilCorner.CornerRadius = UDim.new(0, 8)
+rilCorner.Parent = rightsImageLogo
+
 local rightsInfoLabel = Instance.new("TextLabel")
-rightsInfoLabel.Size = UDim2.new(1, -16, 0, 75)
-rightsInfoLabel.Position = UDim2.new(0, 8, 0, 8)
+rightsInfoLabel.Size = UDim2.new(1, -16, 0, 65)
+rightsInfoLabel.Position = UDim2.new(0, 8, 0, 80)
 rightsInfoLabel.BackgroundTransparency = 1
-rightsInfoLabel.Text = "✨ FRS SCRIPT | VERSION v2.0\n👑 المطور الأساسي: Feras1406\n🏠 سكربت ماب البيوت الرسمي\n📌 جميع الحقوق محفوظة © 2026"
+rightsInfoLabel.Text = "✨ FRS SCRIPT | VERSION v2.0\n👑 المطور الأساسي: Feras1406\n🏠 سكربت ماب البيوت الرسمي | جميع الحقوق محفوظة © 2026"
 rightsInfoLabel.TextColor3 = Color3.fromRGB(240, 240, 240)
 rightsInfoLabel.Font = Enum.Font.SourceSansBold
-rightsInfoLabel.TextSize = 12
-rightsInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+rightsInfoLabel.TextSize = 11
+rightsInfoLabel.TextXAlignment = Enum.TextXAlignment.Center
+rightsInfoLabel.TextWrapped = true
 rightsInfoLabel.Parent = rightsCard
 
 local copyOwnerUserBtn = Instance.new("TextButton")
-copyOwnerUserBtn.Size = UDim2.new(1, -16, 0, 32)
-copyOwnerUserBtn.Position = UDim2.new(0, 8, 0, 88)
+copyOwnerUserBtn.Size = UDim2.new(1, -16, 0, 30)
+copyOwnerUserBtn.Position = UDim2.new(0, 8, 0, 150)
 copyOwnerUserBtn.BackgroundColor3 = Color3.fromRGB(220, 160, 30)
 copyOwnerUserBtn.Text = "📋 نسخ يوزر المطور: Feras1406"
 copyOwnerUserBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 copyOwnerUserBtn.Font = Enum.Font.SourceSansBold
-copyOwnerUserBtn.TextSize = 12
+copyOwnerUserBtn.TextSize = 11
 copyOwnerUserBtn.Parent = rightsCard
 
 local ownerCorner = Instance.new("UICorner")
@@ -1460,13 +1572,13 @@ copyOwnerUserBtn.Activated:Connect(function()
 end)
 
 local copyDiscordBtn = Instance.new("TextButton")
-copyDiscordBtn.Size = UDim2.new(1, -16, 0, 32)
-copyDiscordBtn.Position = UDim2.new(0, 8, 0, 126)
+copyDiscordBtn.Size = UDim2.new(1, -16, 0, 30)
+copyDiscordBtn.Position = UDim2.new(0, 8, 0, 186)
 copyDiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
 copyDiscordBtn.Text = "💬 نسخ رابط سيرفر الديسكورد"
 copyDiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 copyDiscordBtn.Font = Enum.Font.SourceSansBold
-copyDiscordBtn.TextSize = 12
+copyDiscordBtn.TextSize = 11
 copyDiscordBtn.Parent = rightsCard
 
 local dcCorner = Instance.new("UICorner")
@@ -1481,13 +1593,13 @@ copyDiscordBtn.Activated:Connect(function()
 end)
 
 local copyYoutubeBtn = Instance.new("TextButton")
-copyYoutubeBtn.Size = UDim2.new(1, -16, 0, 32)
-copyYoutubeBtn.Position = UDim2.new(0, 8, 0, 164)
+copyYoutubeBtn.Size = UDim2.new(1, -16, 0, 30)
+copyYoutubeBtn.Position = UDim2.new(0, 8, 0, 222)
 copyYoutubeBtn.BackgroundColor3 = Color3.fromRGB(205, 32, 31)
 copyYoutubeBtn.Text = "📺 نسخ قناة اليوتيوب الرسمية"
 copyYoutubeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 copyYoutubeBtn.Font = Enum.Font.SourceSansBold
-copyYoutubeBtn.TextSize = 12
+copyYoutubeBtn.TextSize = 11
 copyYoutubeBtn.Parent = rightsCard
 
 local ytCorner = Instance.new("UICorner")
