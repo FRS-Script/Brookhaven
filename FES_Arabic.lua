@@ -16,6 +16,7 @@ local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local Stats = game:GetService("Stats")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local camera = Workspace.CurrentCamera
@@ -24,19 +25,12 @@ local OWNER_NAME = "Feras1406"
 local DISCORD_LINK = "https://discord.gg/S3Q2zQYsP"
 local YOUTUBE_LINK = "https://www.youtube.com/@Hacker_Feras_S12S"
 
--- معرف صورة الحقوق الجديدة
-local RIGHTS_IMAGE_ID = "rbxassetid://1000028850"
-
--- معرف صورة palette الألوان الملونة المخصصة للإعدادات
-local COLOR_PALETTE_IMAGE_ID = "rbxassetid://130595338747055"
+local RIGHTS_IMAGE_ID = "rbxassetid://6023426915"
+local COLOR_PALETTE_IMAGE_ID = "rbxassetid://6023426915"
 
 local authorizedPublishers = {
     ["Feras1406"] = true
 }
-
-local function isUserAuthorized()
-    return authorizedPublishers[player.Name] or player.Name == OWNER_NAME
-end
 
 if playerGui:FindFirstChild("FRS_Rectangular_Beta") then
     playerGui:FindFirstChild("FRS_Rectangular_Beta"):Destroy()
@@ -44,6 +38,10 @@ end
 
 if playerGui:FindFirstChild("ShadowFlyScreen") then
     playerGui:FindFirstChild("ShadowFlyScreen"):Destroy()
+end
+
+if playerGui:FindFirstChild("FRS_TopStatsHUD") then
+    playerGui:FindFirstChild("FRS_TopStatsHUD"):Destroy()
 end
 
 task.spawn(function()
@@ -97,6 +95,76 @@ local function playAudioDirect(soundAssetId, soundName)
         end
     end)
 end
+
+-- ================================================================================--
+--   شريط الأداء العلوي (FPS, Ping, Resolution, Time) أعلى الشاشة يمين           --
+-- ================================================================================--
+local topStatsGui = Instance.new("ScreenGui")
+topStatsGui.Name = "FRS_TopStatsHUD"
+topStatsGui.Parent = playerGui
+topStatsGui.ResetOnSpawn = false
+
+local statsFrame = Instance.new("Frame")
+statsFrame.Size = UDim2.new(0, 240, 0, 32)
+statsFrame.Position = UDim2.new(1, -250, 0, 10)
+statsFrame.BackgroundColor3 = Color3.fromRGB(12, 14, 20)
+statsFrame.BackgroundTransparency = 0.3
+statsFrame.Parent = topStatsGui
+
+local statsCorner = Instance.new("UICorner")
+statsCorner.CornerRadius = UDim.new(0, 6)
+statsCorner.Parent = statsFrame
+
+local statsStroke = Instance.new("UIStroke")
+statsStroke.Thickness = 1.5
+statsStroke.Color = Color3.fromRGB(255, 215, 0)
+statsStroke.Parent = statsFrame
+
+local statsLabel = Instance.new("TextLabel")
+statsLabel.Size = UDim2.new(1, 0, 1, 0)
+statsLabel.BackgroundTransparency = 1
+statsLabel.Text = "FPS: 60 | PING: 50ms | 1920x1080"
+statsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statsLabel.Font = Enum.Font.SourceSansBold
+statsLabel.TextSize = 11
+statsLabel.Parent = statsFrame
+
+-- تحديث الفريمات والبنغ والدقة والوقت حقيقي كل ثانية
+task.spawn(function()
+    local lastTick = tick()
+    local frameCount = 0
+    local currentFPS = 60
+    
+    RunService.RenderStepped:Connect(function()
+        frameCount = frameCount + 1
+        if tick() - lastTick >= 1 then
+            currentFPS = frameCount
+            frameCount = 0
+            lastTick = tick()
+        end
+    end)
+    
+    while true do
+        task.wait(1)
+        pcall(function()
+            local pingVal = 50
+            if Stats and Stats.Network and Stats.Network.ServerStatsItem then
+                for _, stat in ipairs(Stats.Network.ServerStatsItem:GetChildren()) do
+                    if stat.Name == "Data Ping" then
+                        pingVal = math.floor(stat:GetValue())
+                        break
+                    end
+                end
+            end
+            
+            local viewport = camera.ViewportSize
+            local resText = math.floor(viewport.X) .. "x" .. math.floor(viewport.Y)
+            local timeText = os.date("%H:%M:%S")
+            
+            statsLabel.Text = "FPS: " .. currentFPS .. " | Ping: " .. pingVal .. "ms | " .. resText
+        end)
+    end
+end)
 
 -- الواجهة الرئيسية
 local screenGui = Instance.new("ScreenGui")
@@ -196,7 +264,7 @@ closeCorner.Parent = closeTopBtn
 local miniBox = Instance.new("ImageButton")
 miniBox.Size = UDim2.new(0, 60, 0, 60)
 miniBox.Position = UDim2.new(0.1, 0, 0.2, 0)
-miniBox.BackgroundColor3 = Color3.fromRGB(12, 14, 20)
+miniBox.BackgroundColor3 = Color3.fromRGB(25, 30, 42)
 miniBox.BackgroundTransparency = 0.1
 miniBox.Image = RIGHTS_IMAGE_ID
 miniBox.Visible = false
@@ -348,14 +416,13 @@ local function createActionButton(text, color, parent)
     return btn
 end
 
--- 📢 قسم الأخبار (تفاعلي بالكامل: كتابة وإضافة وحذف الأخبار)[span_1](start_span)[span_1](end_span)
+-- 📢 قسم الأخبار (إضافة وحذف)
 newsContainer.CanvasSize = UDim2.new(0, 0, 0, 380)
 
 local serverNewsList = {
     {author = "Feras1406", text = "أهلاً بك يا فراس في النسخة العملاقة من سكربت FRS SCRIPT!"}
 }
 
--- صندوق إضافة خبر جديد
 local addNewsInputFrame = Instance.new("Frame")
 addNewsInputFrame.Size = UDim2.new(1, 0, 0, 40)
 addNewsInputFrame.BackgroundColor3 = Color3.fromRGB(20, 26, 36)
@@ -458,7 +525,6 @@ local function renderServerNews()
         newsLabel.TextWrapped = true
         newsLabel.Parent = newsCard
         
-        -- زر حذف الخبر 🗑️
         local deleteNewsBtn = Instance.new("TextButton")
         deleteNewsBtn.Size = UDim2.new(0, 28, 0, 28)
         deleteNewsBtn.Position = UDim2.new(1, -34, 0, 14)
@@ -1494,7 +1560,6 @@ createColorBtn("أحمر", 0.4, Color3.fromRGB(220, 50, 50))
 createColorBtn("أخضر", 0.6, Color3.fromRGB(50, 200, 100))
 createColorBtn("بنفسجي", 0.8, Color3.fromRGB(150, 50, 220))
 
--- 🎨 زر فتح لوحة منتقي الألوان (Color Picker)
 local openColorPickerBtn = createActionButton("🎨 فتح منتقي الألوان المتقدم (Color Picker)", Color3.fromRGB(120, 50, 200), settingsContainer)
 
 local colorPickerFrame = Instance.new("Frame")
@@ -1551,7 +1616,7 @@ local colorWheelImage = Instance.new("ImageButton")
 colorWheelImage.Name = "ColorWheel"
 colorWheelImage.Size = UDim2.new(0, 180, 0, 130)
 colorWheelImage.Position = UDim2.new(0, 10, 0, 42)
-colorWheelImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+colorWheelImage.BackgroundColor3 = Color3.fromRGB(35, 42, 60)
 colorWheelImage.Image = COLOR_PALETTE_IMAGE_ID
 colorWheelImage.ZIndex = 51
 colorWheelImage.Parent = colorPickerFrame
@@ -1608,7 +1673,7 @@ rcCorner.Parent = rightsCard
 local rightsImageLogo = Instance.new("ImageLabel")
 rightsImageLogo.Size = UDim2.new(0, 64, 0, 64)
 rightsImageLogo.Position = UDim2.new(0.5, -32, 0, 10)
-rightsImageLogo.BackgroundColor3 = Color3.fromRGB(30, 40, 50)
+rightsImageLogo.BackgroundColor3 = Color3.fromRGB(25, 32, 45)
 rightsImageLogo.Image = RIGHTS_IMAGE_ID
 rightsImageLogo.Parent = rightsCard
 
@@ -1722,6 +1787,7 @@ closeTopBtn.Activated:Connect(function()
     internalSound:Stop()
     internalSound:Destroy()
     screenGui:Destroy()
+    topStatsGui:Destroy()
     shadowFlyGui:Destroy()
 end)
 
