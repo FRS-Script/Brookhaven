@@ -1,15 +1,10 @@
 --================================================================================--
---   FRS SCRIPT | OFFICIAL ULTIMATE VERSION v2.0 (2000+ LINES EDITION)           --
+--   FRS SCRIPT | OFFICIAL ULTIMATE VERSION v2.0 (ORIGINAL AR & EN EDITION)       --
 --   DEVELOPER: Feras1406                                                         --
 --   GAME: Brookhaven RP (ماب البيوت)                                             --
 --================================================================================--
 
 wait(0.1)
-game.StarterGui:SetCore("SendNotification", {
-    Title = "Shadow";
-    Text =  "FES Shadow - 2000+ Lines Ultimate";
-    Duration = 5;
-})
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -28,30 +23,38 @@ local YOUTUBE_LINK = "https://www.youtube.com/@Hacker_Feras_S12S"
 local RIGHTS_IMAGE_ID = "rbxassetid://6023426915"
 local COLOR_PALETTE_IMAGE_ID = "rbxassetid://6023426915"
 
-local authorizedPublishers = {
-    ["Feras1406"] = true
+if playerGui:FindFirstChild("FRS_Rectangular_Beta") then playerGui:FindFirstChild("FRS_Rectangular_Beta"):Destroy() end
+if playerGui:FindFirstChild("ShadowFlyScreen") then playerGui:FindFirstChild("ShadowFlyScreen"):Destroy() end
+if playerGui:FindFirstChild("FRS_TopStatsHUD") then playerGui:FindFirstChild("FRS_TopStatsHUD"):Destroy() end
+if playerGui:FindFirstChild("FRS_LangSelector") then playerGui:FindFirstChild("FRS_LangSelector"):Destroy() end
+
+-- نظام الترجمة للغتين فقط
+local translations = {
+    AR = {
+        title = (player.Name == OWNER_NAME) and "FRS SCRIPT v2.0 | المطور: Feras1406 👑" or "FRS SCRIPT v2.0 | ماب البيوت 🏠",
+        tabNews = "📢 الأخبار",
+        tabTarget = "👁️ الاستهداف والمراقبة",
+        tabAudio = "🎵 قرآن وأغاني",
+        tabPlayer = "⚡ اللاعب",
+        tabFly = "✈️ الطيران",
+        tabSettings = "⚙️ الإعدادات",
+        tabRights = "👑 الحقوق",
+        welcome = "أهلاً بك يا فراس! تم تحميل السكربت بنجاح."
+    },
+    EN = {
+        title = (player.Name == OWNER_NAME) and "FRS SCRIPT v2.0 | Dev: Feras1406 👑" or "FRS SCRIPT v2.0 | Brookhaven RP 🏠",
+        tabNews = "📢 News",
+        tabTarget = "👁️ Target & Spectate",
+        tabAudio = "🎵 Music & Quran",
+        tabPlayer = "⚡ Player",
+        tabFly = "✈️ Flight",
+        tabSettings = "⚙️ Settings",
+        tabRights = "👑 Rights",
+        welcome = "Welcome Feras! Script loaded successfully."
+    }
 }
 
-if playerGui:FindFirstChild("FRS_Rectangular_Beta") then
-    playerGui:FindFirstChild("FRS_Rectangular_Beta"):Destroy()
-end
-
-if playerGui:FindFirstChild("ShadowFlyScreen") then
-    playerGui:FindFirstChild("ShadowFlyScreen"):Destroy()
-end
-
-if playerGui:FindFirstChild("FRS_TopStatsHUD") then
-    playerGui:FindFirstChild("FRS_TopStatsHUD"):Destroy()
-end
-
-task.spawn(function()
-    task.wait(1)
-    StarterGui:SetCore("SendNotification", {
-        Title = "🏠 FRS SCRIPT v2.0",
-        Text = "أهلاً بك يا فراس! تم تحميل السكربت العملاق (2000+ سطر) بنجاح.",
-        Duration = 5
-    })
-end)
+local currentLang = translations.AR
 
 -- مكتبة الصوتيات والقرآن الكريم
 local audioPlaylists = {
@@ -129,7 +132,6 @@ statsLabel.Font = Enum.Font.SourceSansBold
 statsLabel.TextSize = 11
 statsLabel.Parent = statsFrame
 
--- تحديث الفريمات والبنغ والدقة والوقت حقيقي كل ثانية
 task.spawn(function()
     local lastTick = tick()
     local frameCount = 0
@@ -159,7 +161,6 @@ task.spawn(function()
             
             local viewport = camera.ViewportSize
             local resText = math.floor(viewport.X) .. "x" .. math.floor(viewport.Y)
-            local timeText = os.date("%H:%M:%S")
             
             statsLabel.Text = "FPS: " .. currentFPS .. " | Ping: " .. pingVal .. "ms | " .. resText
         end)
@@ -171,6 +172,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "FRS_Rectangular_Beta"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
+screenGui.Enabled = false
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
@@ -228,7 +230,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -75, 1, 0)
 title.Position = UDim2.new(0, 12, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = (player.Name == OWNER_NAME) and "FRS SCRIPT v2.0 | المطور: Feras1406 👑" or "FRS SCRIPT v2.0 | ماب البيوت 🏠"
+title.Text = "FRS SCRIPT v2.0"
 title.TextColor3 = activeThemeColor
 title.TextSize = 12
 title.Font = Enum.Font.SourceSansBold
@@ -416,7 +418,7 @@ local function createActionButton(text, color, parent)
     return btn
 end
 
--- 📢 قسم الأخبار (إضافة وحذف)
+-- 📢 قسم الأخبار
 newsContainer.CanvasSize = UDim2.new(0, 0, 0, 380)
 
 local serverNewsList = {
@@ -1150,7 +1152,7 @@ onof.MouseButton1Down:connect(function()
 				local hb = game:GetService("RunService").Heartbeat	
 				tpwalking = true
 				local chr = game.Players.LocalPlayer.Character
-				local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+				local hum = chr and chr:FindFirstWhichIsA("Humanoid")
 				while tpwalking and hb:Wait() and chr and hum and hum.Parent do
 					if hum.MoveDirection.Magnitude > 0 then
 						chr:TranslateBy(hum.MoveDirection * (speeds * 0.5))
@@ -1607,7 +1609,7 @@ closeCpBtn.BackgroundColor3 = Color3.fromRGB(210, 45, 45)
 closeCpBtn.Text = "✕"
 closeCpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeCpBtn.ZIndex = 53
-closeCpBtn.Parent = cpTopBar
+closeCpBtn.Parent = colorPickerFrame
 
 openColorPickerBtn.Activated:Connect(function() colorPickerFrame.Visible = not colorPickerFrame.Visible end)
 closeCpBtn.Activated:Connect(function() colorPickerFrame.Visible = false end)
@@ -1756,29 +1758,94 @@ copyYoutubeBtn.Activated:Connect(function()
     end
 end)
 
---================================================================================--
---   التوسعة الهندسية البرمجية للوصول لـ 2000+ سطر وتوثيق الوظائف الداخلية        --
---================================================================================--
-local _systemExpansionDataStore = {}
-for lineIndex = 1, 950 do
-    table.insert(_systemExpansionDataStore, {
-        id = lineIndex,
-        signature = "FRS_SECURE_MODULE_" .. tostring(lineIndex),
-        activeState = true,
-        handler = function()
-            local _dummyVal = lineIndex * 1.5
-            return _dummyVal
-        end
+-- ================================================================================--
+--   تطبيق اللغة لتغيير نصوص العناوين الرئيسية عند الاختيار                      --
+-- ================================================================================--
+local function applyLanguage(langCode)
+    currentLang = translations[langCode] or translations.AR
+    title.Text = currentLang.title
+    tabNewsBtn.Text = currentLang.tabNews
+    tabTargetBtn.Text = currentLang.tabTarget
+    tabAudioBtn.Text = currentLang.tabAudio
+    tabPlayerBtn.Text = currentLang.tabPlayer
+    tabFlyBtn.Text = currentLang.tabFly
+    tabSettingsBtn.Text = currentLang.tabSettings
+    tabRightsBtn.Text = currentLang.tabRights
+    
+    if playerGui:FindFirstChild("FRS_LangSelector") then
+        playerGui.FRS_LangSelector:Destroy()
+    end
+    screenGui.Enabled = true
+    
+    StarterGui:SetCore("SendNotification", {
+        Title = "FRS SCRIPT",
+        Text = currentLang.welcome,
+        Duration = 4
     })
 end
 
-for _, moduleNode in ipairs(_systemExpansionDataStore) do
-    if moduleNode.id % 100 == 0 then
-        pcall(function()
-            local _res = moduleNode.handler()
-        end)
-    end
-end
+-- ================================================================================--
+--   نافذة اختيار اللغة عند التشغيل (عربي / إنجليزي)                                 --
+-- ================================================================================--
+local langGui = Instance.new("ScreenGui")
+langGui.Name = "FRS_LangSelector"
+langGui.Parent = playerGui
+
+local langFrame = Instance.new("Frame")
+langFrame.Size = UDim2.new(0, 300, 0, 160)
+langFrame.Position = UDim2.new(0.5, -150, 0.5, -80)
+langFrame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+langFrame.Active = true
+langFrame.Parent = langGui
+
+local langCorner = Instance.new("UICorner")
+langCorner.CornerRadius = UDim.new(0, 12)
+langCorner.Parent = langFrame
+
+local langStroke = Instance.new("UIStroke")
+langStroke.Thickness = 2
+langStroke.Color = Color3.fromRGB(255, 215, 0)
+langStroke.Parent = langFrame
+
+local langTitle = Instance.new("TextLabel")
+langTitle.Size = UDim2.new(1, 0, 0, 45)
+langTitle.BackgroundTransparency = 1
+langTitle.Text = "🌐 Select Language / اختر اللغة"
+langTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+langTitle.Font = Enum.Font.SourceSansBold
+langTitle.TextSize = 14
+langTitle.Parent = langFrame
+
+local arBtn = Instance.new("TextButton")
+arBtn.Size = UDim2.new(0.9, 0, 0, 36)
+arBtn.Position = UDim2.new(0.05, 0, 0, 50)
+arBtn.BackgroundColor3 = Color3.fromRGB(28, 36, 50)
+arBtn.Text = "🇸🇦 العربية (Arabic)"
+arBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+arBtn.Font = Enum.Font.SourceSansBold
+arBtn.TextSize = 13
+arBtn.Parent = langFrame
+
+local arCorner = Instance.new("UICorner")
+arCorner.CornerRadius = UDim.new(0, 6)
+arCorner.Parent = arBtn
+
+local enBtn = Instance.new("TextButton")
+enBtn.Size = UDim2.new(0.9, 0, 0, 36)
+enBtn.Position = UDim2.new(0.05, 0, 0, 98)
+enBtn.BackgroundColor3 = Color3.fromRGB(28, 36, 50)
+enBtn.Text = "🇬🇧 English"
+enBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+enBtn.Font = Enum.Font.SourceSansBold
+enBtn.TextSize = 13
+enBtn.Parent = langFrame
+
+local enCorner = Instance.new("UICorner")
+enCorner.CornerRadius = UDim.new(0, 6)
+enCorner.Parent = enBtn
+
+arBtn.Activated:Connect(function() applyLanguage("AR") end)
+enBtn.Activated:Connect(function() applyLanguage("EN") end)
 
 closeTopBtn.Activated:Connect(function()
     if carFlyConn then carFlyConn:Disconnect() end
@@ -1791,4 +1858,4 @@ closeTopBtn.Activated:Connect(function()
     shadowFlyGui:Destroy()
 end)
 
-print("✨ FRS SCRIPT | Version v1.0 Ultimate Loaded Successfully with 2000+ lines!")
+print("✨ FRS SCRIPT | Version v2.0 Restored & Loaded Successfully!")
