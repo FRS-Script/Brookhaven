@@ -24,6 +24,12 @@ local OWNER_NAME = "Feras1406"
 local DISCORD_LINK = "https://discord.gg/S3Q2zQYsP"
 local YOUTUBE_LINK = "https://www.youtube.com/@Hacker_Feras_S12S"
 
+-- معرف صورة الحقوق الجديدة
+local RIGHTS_IMAGE_ID = "rbxassetid://1000028850"
+
+-- معرف صورة palette الألوان الملونة المخصصة للإعدادات
+local COLOR_PALETTE_IMAGE_ID = "rbxassetid://130595338747055"
+
 local authorizedPublishers = {
     ["Feras1406"] = true
 }
@@ -192,7 +198,7 @@ miniBox.Size = UDim2.new(0, 60, 0, 60)
 miniBox.Position = UDim2.new(0.1, 0, 0.2, 0)
 miniBox.BackgroundColor3 = Color3.fromRGB(12, 14, 20)
 miniBox.BackgroundTransparency = 0.1
-miniBox.Image = "rbxassetid://109062168444973"
+miniBox.Image = RIGHTS_IMAGE_ID
 miniBox.Visible = false
 miniBox.Active = true
 miniBox.Parent = screenGui
@@ -342,14 +348,54 @@ local function createActionButton(text, color, parent)
     return btn
 end
 
--- 📢 قسم الأخبار
-newsContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
+-- 📢 قسم الأخبار (تفاعلي بالكامل: كتابة وإضافة وحذف الأخبار)[span_1](start_span)[span_1](end_span)
+newsContainer.CanvasSize = UDim2.new(0, 0, 0, 380)
+
 local serverNewsList = {
-    {author = "Feras1406", text = "أهلاً بك يا فراس في النسخة العملاقة من سكربت FRS SCRIPT!", time = "الآن"}
+    {author = "Feras1406", text = "أهلاً بك يا فراس في النسخة العملاقة من سكربت FRS SCRIPT!"}
 }
 
+-- صندوق إضافة خبر جديد
+local addNewsInputFrame = Instance.new("Frame")
+addNewsInputFrame.Size = UDim2.new(1, 0, 0, 40)
+addNewsInputFrame.BackgroundColor3 = Color3.fromRGB(20, 26, 36)
+addNewsInputFrame.Parent = newsContainer
+
+local addNewsCorner = Instance.new("UICorner")
+addNewsCorner.CornerRadius = UDim.new(0, 6)
+addNewsCorner.Parent = addNewsInputFrame
+
+local newsTextBox = Instance.new("TextBox")
+newsTextBox.Size = UDim2.new(0.72, -6, 0.8, 0)
+newsTextBox.Position = UDim2.new(0.02, 0, 0.1, 0)
+newsTextBox.BackgroundColor3 = Color3.fromRGB(30, 38, 52)
+newsTextBox.PlaceholderText = "اكتب خبراً جديداً هنا..."
+newsTextBox.Text = ""
+newsTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+newsTextBox.Font = Enum.Font.SourceSansBold
+newsTextBox.TextSize = 11
+newsTextBox.Parent = addNewsInputFrame
+
+local addNewsTextCorner = Instance.new("UICorner")
+addNewsTextCorner.CornerRadius = UDim.new(0, 5)
+addNewsTextCorner.Parent = newsTextBox
+
+local postNewsBtn = Instance.new("TextButton")
+postNewsBtn.Size = UDim2.new(0.24, 0, 0.8, 0)
+postNewsBtn.Position = UDim2.new(0.74, 0, 0.1, 0)
+postNewsBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 90)
+postNewsBtn.Text = "➕ نشر الخبر"
+postNewsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+postNewsBtn.Font = Enum.Font.SourceSansBold
+postNewsBtn.TextSize = 11
+postNewsBtn.Parent = addNewsInputFrame
+
+local postNewsBtnCorner = Instance.new("UICorner")
+postNewsBtnCorner.CornerRadius = UDim.new(0, 5)
+postNewsBtnCorner.Parent = postNewsBtn
+
 local newsListScroll = Instance.new("ScrollingFrame")
-newsListScroll.Size = UDim2.new(1, 0, 0, 140)
+newsListScroll.Size = UDim2.new(1, 0, 0, 200)
 newsListScroll.BackgroundColor3 = Color3.fromRGB(15, 20, 28)
 newsListScroll.BackgroundTransparency = 0.3
 newsListScroll.BorderSizePixel = 0
@@ -365,10 +411,11 @@ local function renderServerNews()
     for _, child in ipairs(newsListScroll:GetChildren()) do
         if child:IsA("Frame") then child:Destroy() end
     end
-    newsListScroll.CanvasSize = UDim2.new(0, 0, 0, #serverNewsList * 60)
-    for _, news in ipairs(serverNewsList) do
+    newsListScroll.CanvasSize = UDim2.new(0, 0, 0, #serverNewsList * 62)
+    
+    for idx, news in ipairs(serverNewsList) do
         local newsCard = Instance.new("Frame")
-        newsCard.Size = UDim2.new(1, 0, 0, 54)
+        newsCard.Size = UDim2.new(1, 0, 0, 56)
         newsCard.BackgroundColor3 = Color3.fromRGB(25, 35, 50)
         newsCard.BackgroundTransparency = 0.2
         newsCard.Parent = newsListScroll
@@ -379,7 +426,7 @@ local function renderServerNews()
         
         local authorAvatar = Instance.new("ImageLabel")
         authorAvatar.Size = UDim2.new(0, 42, 0, 42)
-        authorAvatar.Position = UDim2.new(0, 6, 0, 6)
+        authorAvatar.Position = UDim2.new(0, 6, 0, 7)
         authorAvatar.BackgroundColor3 = Color3.fromRGB(30, 40, 50)
         authorAvatar.Image = "rbxassetid://0"
         authorAvatar.Parent = newsCard
@@ -400,7 +447,7 @@ local function renderServerNews()
         end)
         
         local newsLabel = Instance.new("TextLabel")
-        newsLabel.Size = UDim2.new(1, -60, 1, 0)
+        newsLabel.Size = UDim2.new(1, -95, 1, 0)
         newsLabel.Position = UDim2.new(0, 54, 0, 0)
         newsLabel.BackgroundTransparency = 1
         newsLabel.Text = "📢 [" .. news.author .. "]: " .. news.text
@@ -410,8 +457,40 @@ local function renderServerNews()
         newsLabel.TextXAlignment = Enum.TextXAlignment.Left
         newsLabel.TextWrapped = true
         newsLabel.Parent = newsCard
+        
+        -- زر حذف الخبر 🗑️
+        local deleteNewsBtn = Instance.new("TextButton")
+        deleteNewsBtn.Size = UDim2.new(0, 28, 0, 28)
+        deleteNewsBtn.Position = UDim2.new(1, -34, 0, 14)
+        deleteNewsBtn.BackgroundColor3 = Color3.fromRGB(210, 45, 45)
+        deleteNewsBtn.Text = "🗑️"
+        deleteNewsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        deleteNewsBtn.Font = Enum.Font.SourceSansBold
+        deleteNewsBtn.TextSize = 12
+        deleteNewsBtn.Parent = newsCard
+        
+        local delCorner = Instance.new("UICorner")
+        delCorner.CornerRadius = UDim.new(0, 5)
+        delCorner.Parent = deleteNewsBtn
+        
+        deleteNewsBtn.Activated:Connect(function()
+            table.remove(serverNewsList, idx)
+            renderServerNews()
+            StarterGui:SetCore("SendNotification", {Title = "📢 الأخبار", Text = "تم حذف الخبر بنجاح!", Duration = 2})
+        end)
     end
 end
+
+postNewsBtn.Activated:Connect(function()
+    local text = newsTextBox.Text:gsub("^%s+", ""):gsub("%s+$", "")
+    if text ~= "" then
+        table.insert(serverNewsList, 1, {author = player.Name, text = text})
+        newsTextBox.Text = ""
+        renderServerNews()
+        StarterGui:SetCore("SendNotification", {Title = "📢 الأخبار", Text = "تم نشر الخبر بنجاح!", Duration = 2})
+    end
+end)
+
 renderServerNews()
 
 -- 👁️ قسم الاستهداف والمراقبة
@@ -1415,7 +1494,7 @@ createColorBtn("أحمر", 0.4, Color3.fromRGB(220, 50, 50))
 createColorBtn("أخضر", 0.6, Color3.fromRGB(50, 200, 100))
 createColorBtn("بنفسجي", 0.8, Color3.fromRGB(150, 50, 220))
 
--- 🎨 زر فتح لوحة منتقي الألوان (Color Picker) المضافة
+-- 🎨 زر فتح لوحة منتقي الألوان (Color Picker)
 local openColorPickerBtn = createActionButton("🎨 فتح منتقي الألوان المتقدم (Color Picker)", Color3.fromRGB(120, 50, 200), settingsContainer)
 
 local colorPickerFrame = Instance.new("Frame")
@@ -1473,7 +1552,7 @@ colorWheelImage.Name = "ColorWheel"
 colorWheelImage.Size = UDim2.new(0, 180, 0, 130)
 colorWheelImage.Position = UDim2.new(0, 10, 0, 42)
 colorWheelImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-colorWheelImage.Image = "rbxassetid://130595338747055"
+colorWheelImage.Image = COLOR_PALETTE_IMAGE_ID
 colorWheelImage.ZIndex = 51
 colorWheelImage.Parent = colorPickerFrame
 
@@ -1514,7 +1593,7 @@ applyCustomColorBtn.Activated:Connect(function()
     colorPickerFrame.Visible = false
 end)
 
--- 👑 قسم الحقوق (مُحدث مع إضافة الصورة المخصصة 130595338747055)
+-- 👑 قسم الحقوق
 rightsContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
 
 local rightsCard = Instance.new("Frame")
@@ -1526,12 +1605,11 @@ local rcCorner = Instance.new("UICorner")
 rcCorner.CornerRadius = UDim.new(0, 8)
 rcCorner.Parent = rightsCard
 
--- 🖼️ إضافة صورة الحقوق المخصصة داخل القائمة
 local rightsImageLogo = Instance.new("ImageLabel")
 rightsImageLogo.Size = UDim2.new(0, 64, 0, 64)
 rightsImageLogo.Position = UDim2.new(0.5, -32, 0, 10)
 rightsImageLogo.BackgroundColor3 = Color3.fromRGB(30, 40, 50)
-rightsImageLogo.Image = "rbxassetid://130595338747055"
+rightsImageLogo.Image = RIGHTS_IMAGE_ID
 rightsImageLogo.Parent = rightsCard
 
 local rilCorner = Instance.new("UICorner")
